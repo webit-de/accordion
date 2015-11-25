@@ -11,9 +11,11 @@ define(['jquery', 'jquery.exists'], function($) {
   var Accordion = {
     DEFAULTS: {
       animationSpeed: 300,
-      naturalBehavior: false
+      naturalBehavior: false,
+      offsetTop: 0
     },
     cacheElements: function() {
+      this.$window = $(window);
       this.$accordion = $('.accordion');
       this.$accordion_content = $('.accordion-content');
       this.$accordion_header = $('.accordion-header');
@@ -46,6 +48,10 @@ define(['jquery', 'jquery.exists'], function($) {
           event.preventDefault();
           Accordion.toggleAccordion($(this));
         }
+      });
+
+      Accordion.$window.on('hashchange', function() {
+        Accordion.openAccordionViaHash();
       });
     },
 
@@ -154,10 +160,23 @@ define(['jquery', 'jquery.exists'], function($) {
     },
 
     openAccordionViaHash: function() {
-      // find linked accordion content and click
-      // corresponding .accordion-header to open it
-      if(window.location.hash) {
-        $(window.location.hash).prev().trigger('click');
+      // find linked accordion header with data-id and open
+      // corresponding accordion content element
+      if (window.location.hash) { // URL with hash found
+        var offset_top = 0,
+            $accordion_header = $('.accordion-header[data-id="' + window.location.hash.replace('#', '') + '"]');
+        // check if accordon exists
+        if ($accordion_header.length) {
+          offset_top = $accordion_header.offset().top;
+          // check if accordon is already opened
+          if (!$accordion_header.hasClass('accordion-active')) {
+            $accordion_header.trigger('click');
+          }
+
+          setTimeout(function() {
+            Accordion.$window.scrollTop(offset_top - Accordion.options.offsetTop);
+          }, 150);
+        }
       }
     },
 
@@ -171,7 +190,6 @@ define(['jquery', 'jquery.exists'], function($) {
           if(window.location.hash != ('#' + this.id)) {
             $(this).prev().trigger('click');
           }
-
         });
       });
     }
