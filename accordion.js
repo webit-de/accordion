@@ -65,6 +65,28 @@ define(['jquery', 'jquery.exists'], function($) {
     },
 
     /**
+    * Initialize the accordion.
+    * @function destroy
+    * @public
+    */
+    destroy: function($accordion_group) {
+      if ($accordion_group.length) {
+        $accordion_group.removeAttr('role');
+        $accordion_group.data('name', null);
+
+        $accordion_group.find(Accordion.options.accordion_header)
+        .removeAttr('id role tabindex aria-selected aria-controls')
+        .removeClass(Accordion.options.class_accordion_active);
+
+        $accordion_group.find(Accordion.options.accordion_content)
+        .removeAttr('aria-expanded role aria-hidden aria-labelledby style id')
+        .removeClass(Accordion.options.accordion_opened.replace('.', ''));
+
+        Accordion.$accordion_header.off('.accordion');
+      }
+    },
+
+    /**
     * Bind events to all interactive elements.
     * @function _bindEvents
     * @param {Object} accordion - Current accordion from setup loop.
@@ -257,7 +279,9 @@ define(['jquery', 'jquery.exists'], function($) {
 
   return /** @alias module:Accordion */ {
     /** init */
-    init: Accordion.init
+    init: Accordion.init,
+    /** destroy */
+    destroy: Accordion.destroy
   };
 
 });
