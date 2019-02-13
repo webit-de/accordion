@@ -15,7 +15,23 @@ define(['jquery', 'jquery.exists'], function($) {
     */
     DEFAULTS: {
       animationSpeed: 300,
-      naturalBehavior: false
+      naturalBehavior: false,
+      accordion: '.accordion',
+      accordion_content: '.accordion-content',
+      accordion_header: '.accordion-header',
+      accordion_opened: '.accordion-opened',
+      class_accordion_active: 'accordion-active'
+    },
+
+    /**
+    * Extend defaults with customized options.
+    * @function _setOptions
+    * @param {Object} options - .
+    * @private
+    */
+    _setOptions: function(options) {
+      // extend DEFAULTS with given options
+      this.options = $.extend({}, Accordion.DEFAULTS, options);
     },
 
     /**
@@ -24,10 +40,10 @@ define(['jquery', 'jquery.exists'], function($) {
     * @private
     */
     _cacheElements: function() {
-      this.$accordion = $('.accordion');
-      this.$accordion_content = $('.accordion-content');
-      this.$accordion_header = $('.accordion-header');
-      this.$accordion_opened = $('.accordion-opened');
+      this.$accordion = $(Accordion.options.accordion);
+      this.$accordion_content = this.$accordion.find(Accordion.options.accordion_content);
+      this.$accordion_header = this.$accordion.find(Accordion.options.accordion_header);
+      this.$accordion_opened = this.$accordion.find(Accordion.options.accordion_opened);
     },
 
     /**
@@ -69,17 +85,6 @@ define(['jquery', 'jquery.exists'], function($) {
           Accordion._toggleAccordion($(this));
         }
       });
-    },
-
-    /**
-    * Extend defaults with customized options.
-    * @function _setOptions
-    * @param {Object} options - .
-    * @private
-    */
-    _setOptions: function(options) {
-      // extend DEFAULTS with given options
-      this.options = $.extend({}, Accordion.DEFAULTS, options);
     },
 
     /**
@@ -252,7 +257,7 @@ define(['jquery', 'jquery.exists'], function($) {
 
   return /** @alias module:Accordion */ {
     /** init */
-    init: Accordion.init,
+    init: Accordion.init
   };
 
 });
