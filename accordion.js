@@ -53,12 +53,10 @@ define(['jquery', 'jquery.exists'], function($) {
     * @param {Object} options - The properties you would like to overwrite.
     */
     init: function(options) {
+      Accordion._setOptions(options);
       Accordion._cacheElements();
       Accordion.$accordion.exists(function() {
-        Accordion._setOptions(options);
-        Accordion._addARIAlabels();
         Accordion._setupAccordion();
-        Accordion._bindEvents();
         Accordion._openAccordionViaClass();
         Accordion._openAccordionViaHash();
       });
@@ -94,14 +92,14 @@ define(['jquery', 'jquery.exists'], function($) {
     */
     _bindEvents: function(accordion) {
       // Click accordion header
-      this.$accordion_header.on('click', function(event) {
+      accordion.find(Accordion.options.accordion_header).on('click.accordion', function(event) {
         event.preventDefault();
         Accordion._closeAll($(this));
         Accordion._toggleAccordion($(this));
       });
 
       // tab to accordion header and press space bar
-      this.$accordion_header.on('keydown', function(event) {
+      accordion.find(Accordion.options.accordion_header).on('keydown.accordion', function(event) {
         if (event.keyCode === 32) {
           event.preventDefault();
           Accordion._toggleAccordion($(this));
@@ -115,51 +113,63 @@ define(['jquery', 'jquery.exists'], function($) {
     * @private
     */
     _setupAccordion: function() {
+      // set html attributes
       this.$accordion.attr('role', 'tablist');
       this.$accordion_content.attr('aria-expanded', 'false').attr('role', 'tabpanel').hide();
       this.$accordion_header.attr('role', 'tab').attr('tabindex', '0').attr('aria-selected', 'false');
 
-      this.$accordion.each(function() {
-        $(this).trigger('accordion.initialized');
+      // set up each accordion
+      this.$accordion.each(function(index) {
+        var $this = $(this);
+
+        if(!$this.data('name')) {
+
+          // save state
+          $this.data('name', 'accordion');
+
+          // setup
+          Accordion._addARIAlabels($this, index);
+          Accordion._bindEvents($this);
+
+          // publish event with current accordion
+          $this.trigger('accordion.initialized', $this);
+
+        }
+
+        $this.data('accordion-settings', Accordion.options);
       });
     },
 
     /**
     * Add ARIA labels to each accordion.
     * @function _addARIAlabels
+    * @param {Object} accordion - jQuery object with current accordion from setup loop.
+    * @param {Object} index - index from setup loop.
     * @private
     */
-    _addARIAlabels: function() {
-      this.$accordion.each(function(index) {
+    _addARIAlabels: function(accordion, index) {
+      var
+      $accordion_header = accordion.find(Accordion.options.accordion_header).attr('id', 'accordion-' + index),
+      $accordion_content = accordion.find(Accordion.options.accordion_content).attr('id', 'accordion-' + index);
 
-        var
-        that = $(this),
-        $accordion_header = that.find('.accordion-header').attr('id', 'accordion-' + index),
-        $accordion_content = that.find('.accordion-content').attr('id', 'accordion-' + index);
+      $accordion_header.each(function (index){
+        var that = $(this);
 
-        $accordion_header.each(function (index){
+        // set IDs
+        that
+        .attr('id', that.attr('id') + '-header-' + index)
+        .next()
+        .attr('id', that.next().attr('id') + '-content-' + index);
 
-          var that = $(this);
+        // set aria-controls
+        that.attr('aria-controls', that.next().attr('id'));
+      });
 
-          // set IDs
-          that
-          .attr('id', that.attr('id') + '-header-' + index)
-          .next()
-          .attr('id', that.next().attr('id') + '-content-' + index);
+      $accordion_content.each(function() {
+        var that = $(this);
 
-          // set aria-controls
-          that
-          .attr('aria-controls', that.next().attr('id'));
-        });
-
-        $accordion_content.each(function() {
-          var that = $(this);
-
-          // set aria-labelledby
-          that
-          .attr('aria-labelledby', that.prev().attr('id'));
-        });
-
+        // set aria-labelledby
+        that.attr('aria-labelledby', that.prev().attr('id'));
       });
     },
 
@@ -170,8 +180,8 @@ define(['jquery', 'jquery.exists'], function($) {
     * @param {Object} accordion_header - The clicked accordion header.
     */
     _closeAll: function(accordion_header) {
-
-      var opened = accordion_header.closest('.accordion').find('.accordion-active');
+      var
+      opened = accordion_header.closest('.accordion').find('.' + Accordion.options.class_accordion_active);
 
       // close opened entry when option is set and the open entry is not the clicked
       if(this.options.naturalBehavior && !opened.is(accordion_header)) {
@@ -186,12 +196,14 @@ define(['jquery', 'jquery.exists'], function($) {
     * @param {Object} accordion_header - The clicked accordion header.
     */
     _openAccordion: function(accordion_header) {
-
       var
       accordion_content = accordion_header.next();
 
+      // trigger event before the accordion opens
+      accordion_header.trigger('accordion.beforeOpen', [accordion_header, accordion_content]);
+
       // accordion-header
-      accordion_header.attr('aria-selected', 'true').addClass('accordion-active');
+      accordion_header.attr('aria-selected', 'true').addClass(Accordion.options.class_accordion_active);
 
       // accordion-content
       accordion_content.attr('aria-expanded', 'true').attr('aria-hidden', 'false');
@@ -211,16 +223,20 @@ define(['jquery', 'jquery.exists'], function($) {
     _closeAccordion: function($accordion_header) {
 
       var
-      accordion_content = accordion_header.next();
+      $accordion_content = $accordion_header.next();
+
+      // trigger event before the accordion closes
+      $accordion_header.trigger('accordion.beforeClose', [$accordion_header, $accordion_content]);
+
 
       // accordion-header
-      accordion_header.attr('aria-selected', 'false').removeClass('accordion-active');
+      $accordion_header.attr('aria-selected', 'false').removeClass(Accordion.options.class_accordion_active);
 
       // accordion-content
-      accordion_content.attr('aria-expanded', 'false').attr('aria-hidden', 'true');
+      $accordion_content.attr('aria-expanded', 'false').attr('aria-hidden', 'true');
 
-      accordion_content.slideUp(Accordion.options.animationSpeed, function() {
-        accordion_header.trigger('accordion.closed', [accordion_header, accordion_content]);
+      $accordion_content.slideUp(Accordion.options.animationSpeed, function() {
+        $accordion_header.trigger('accordion.closed', [$accordion_header, $accordion_content]);
       });
 
     },
