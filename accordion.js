@@ -129,7 +129,7 @@ define(['jquery', 'jquery.exists'], function($) {
           $this.data('name', 'accordion');
 
           // setup
-          Accordion._addARIAlabels($this, index);
+          Accordion._setupAccordionItems($this, index);
           Accordion._bindEvents($this);
 
           // publish event with current accordion
@@ -142,36 +142,44 @@ define(['jquery', 'jquery.exists'], function($) {
     },
 
     /**
-    * Add ARIA labels to each accordion.
-    * @function _addARIAlabels
+    * loop throught accodrion items within each accordion.
+    * @function _setupAccordionItems
     * @param {Object} accordion - jQuery object with current accordion from setup loop.
     * @param {Object} index - index from setup loop.
     * @private
     */
-    _addARIAlabels: function(accordion, index) {
+    _setupAccordionItems: function(accordion, index) {
       var
-      $accordion_header = accordion.find(Accordion.options.accordion_header).attr('id', 'accordion-' + index),
-      $accordion_content = accordion.find(Accordion.options.accordion_content).attr('id', 'accordion-' + index);
+      $accordion_header = accordion.find(Accordion.options.accordion_header),
+      $accordion_content = accordion.find(Accordion.options.accordion_content),
+      $currentAccordionHeader,
+      $currentAccordionContent,
 
-      $accordion_header.each(function (index){
-        var that = $(this);
+      loop_index = $accordion_header.length > $accordion_content.length ? $accordion_header.length : $accordion_content.length;
 
-        // set IDs
-        that
-        .attr('id', that.attr('id') + '-header-' + index)
-        .next()
-        .attr('id', that.next().attr('id') + '-content-' + index);
+      for (var i = 0; i < loop_index; i++) {
 
-        // set aria-controls
-        that.attr('aria-controls', that.next().attr('id'));
-      });
+        if ($accordion_header[i] && $accordion_content[i]) {
+          $currentAccordionHeader = $($accordion_header[i]);
+          $currentAccordionContent = $($accordion_content[i]);
 
-      $accordion_content.each(function() {
-        var that = $(this);
+          // set IDs
+          $currentAccordionHeader
+          .attr('id', 'accordion-' + index + '-header-' + index);
 
-        // set aria-labelledby
-        that.attr('aria-labelledby', that.prev().attr('id'));
-      });
+          $currentAccordionContent
+          .attr('id', 'accordion-' + index + '-content-' + index);
+
+          // set aria-controls
+          $currentAccordionHeader
+          .attr('aria-controls', $currentAccordionContent.attr('id'));
+
+          // set aria-labelledby
+          $currentAccordionContent
+          .attr('aria-labelledby', $currentAccordionHeader.attr('id'));
+        }
+      }
+
     },
 
     /**
