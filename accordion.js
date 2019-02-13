@@ -214,7 +214,7 @@ define(['jquery', 'jquery.exists'], function($) {
     */
     _closeAll: function(accordion_header) {
       var
-      opened = accordion_header.closest('.accordion').find('.' + Accordion.options.class_accordion_active);
+      opened = accordion_header.closest(Accordion.options.accordion).find('.' + Accordion.options.class_accordion_active);
 
       // close opened entry when option is set and the open entry is not the clicked
       if(this.options.naturalBehavior && !opened.is(accordion_header)) {
