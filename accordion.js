@@ -20,6 +20,8 @@ define(['jquery', 'jquery.exists'], function($) {
       accordion_content: '.accordion-content',
       accordion_header: '.accordion-header',
       accordion_opened: '.accordion-opened',
+      accordion_item_tagName: undefined,
+      accordion_item_className: 'accordion-item',
       class_accordion_active: 'accordion-active'
     },
 
@@ -177,6 +179,28 @@ define(['jquery', 'jquery.exists'], function($) {
           // set aria-labelledby
           $currentAccordionContent
           .attr('aria-labelledby', $currentAccordionHeader.attr('id'));
+
+          if(Accordion.options.accordion_item_tagName) {
+            try {
+
+              var
+              clonedHeaderElement,
+              newElement = document.createElement(Accordion.options.accordion_item_tagName);
+
+              if (newElement instanceof HTMLUnknownElement === false) {
+                clonedHeaderElement = $accordion_header[i].cloneNode(true);
+
+                newElement.className = Accordion.options.accordion_item_className;
+                newElement.appendChild(clonedHeaderElement);
+                newElement.appendChild($accordion_content[i]);
+
+                $($accordion_header[i]).replaceWith(newElement);
+              }
+            } catch (e) {
+              console.log(e);
+            }
+
+          }
         }
       }
 
