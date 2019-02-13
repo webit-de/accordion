@@ -92,14 +92,15 @@ define(['jquery', 'jquery.exists'], function($) {
     */
     _bindEvents: function(accordion) {
       // Click accordion header
-      accordion.find(Accordion.options.accordion_header).on('click.accordion', function(event) {
+      accordion.on('click.accordion', Accordion.options.accordion_header, function(event) {
         event.preventDefault();
+
         Accordion._closeAll($(this));
         Accordion._toggleAccordion($(this));
       });
 
       // tab to accordion header and press space bar
-      accordion.find(Accordion.options.accordion_header).on('keydown.accordion', function(event) {
+      accordion.on('keydown.accordion', Accordion.options.accordion_header, function(event) {
         if (event.keyCode === 32) {
           event.preventDefault();
           Accordion._toggleAccordion($(this));
