@@ -179,21 +179,33 @@ define(['jquery', 'jquery.exists'], function($) {
           $currentAccordionContent
           .attr('aria-labelledby', $currentAccordionHeader.attr('id'));
 
+          // wrapp accordion-item with given tabName and tagClass
           if(Accordion.options.accordion_item_tagName) {
             try {
 
               var
-              clonedHeaderElement,
-              newElement = document.createElement(Accordion.options.accordion_item_tagName);
+              firstAccordionElement,
+              secondAccordionElement,
+              newWrapperElement = document.createElement(Accordion.options.accordion_item_tagName);
 
-              if (newElement instanceof HTMLUnknownElement === false) {
-                clonedHeaderElement = $accordion_header[i].cloneNode(true);
+              if (newWrapperElement instanceof HTMLUnknownElement === false) {
 
-                newElement.className = Accordion.options.accordion_item_className;
-                newElement.appendChild(clonedHeaderElement);
-                newElement.appendChild($accordion_content[i]);
+                if ($accordion_header[i].nextElementSibling === $accordion_content[i]) {
+                  // accordion_header is the first, accordion_content is the following element
+                  firstAccordionElement = $accordion_header[i];
+                  secondAccordionElement = $accordion_content[i];
+                } else if ($accordion_header[i].previousElementSibling === $accordion_content[i]) {
+                  // accordion_content is the first, accordion_header is the following element
+                  firstAccordionElement = $accordion_content[i];
+                  secondAccordionElement = $accordion_header[i];
+                }
 
-                $($accordion_header[i]).replaceWith(newElement);
+
+                newWrapperElement.className = Accordion.options.accordion_item_className;
+                newWrapperElement.appendChild(firstAccordionElement.cloneNode(true));
+                newWrapperElement.appendChild(secondAccordionElement);
+
+                $(firstAccordionElement).replaceWith(newWrapperElement);
               }
             } catch (e) {
               console.log(e);

@@ -15,5 +15,7 @@ requirejs.config({
 });
 
 requirejs(['accordion'], function(Accordion) {
-  Accordion.init();
+  Accordion.init({
+    accordion_item_tagName: 'div'
+  });
 });
