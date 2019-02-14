@@ -15,7 +15,7 @@ define(['jquery', 'jquery.exists'], function($) {
     */
     DEFAULTS: {
       animationSpeed: 300, // accordion-toggle animation speed
-      naturalBehavior: false, // after open accordion-item, close other accordion-items
+      closeOtherAccordionItems: false, // after open accordion-item, close other accordion-items
       accordion: '.accordion', // accordion-wrapper className
       accordion_content: '.accordion-content', // accordion-item content className
       accordion_header: '.accordion-header', // accordion-item header className
@@ -216,7 +216,7 @@ define(['jquery', 'jquery.exists'], function($) {
       opened = accordion_header.closest(Accordion.options.accordion).find('.' + Accordion.options.class_accordion_active);
 
       // close opened entry when option is set and the open entry is not the clicked
-      if(this.options.naturalBehavior && !opened.is(accordion_header)) {
+      if(this.options.closeOtherAccordionItems && !opened.is(accordion_header)) {
         this._closeAccordion(opened);
       }
     },
