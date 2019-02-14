@@ -14,15 +14,15 @@ define(['jquery', 'jquery.exists'], function($) {
     * Defaults to be extended into options
     */
     DEFAULTS: {
-      animationSpeed: 300,
-      naturalBehavior: false,
-      accordion: '.accordion',
-      accordion_content: '.accordion-content',
-      accordion_header: '.accordion-header',
-      accordion_opened: '.accordion-opened',
-      accordion_item_tagName: undefined,
-      accordion_item_className: 'accordion-item',
-      class_accordion_active: 'accordion-active'
+      animationSpeed: 300, // accordion-toggle animation speed
+      naturalBehavior: false, // after open accordion-item, close other accordion-items
+      accordion: '.accordion', // accordion-wrapper className
+      accordion_content: '.accordion-content', // accordion-item content className
+      accordion_header: '.accordion-header', // accordion-item header className
+      accordion_opened: '.accordion-opened', // className fot opened accordion-item
+      accordion_item_tagName: undefined, // tagName to wrap accordion-item (accordion-header & accordion-content)
+      accordion_item_className: 'accordion-item', // className for accordion-item wrapper-element
+      class_accordion_active: 'accordion-active' // className for current opened accordion-item
     },
 
     /**
@@ -97,7 +97,7 @@ define(['jquery', 'jquery.exists'], function($) {
       accordion.on('click.accordion', Accordion.options.accordion_header, function(event) {
         event.preventDefault();
 
-        Accordion._closeAll($(this));
+        Accordion._closeOtherAccordionItems($(this));
         Accordion._toggleAccordion($(this));
       });
 
@@ -206,12 +206,12 @@ define(['jquery', 'jquery.exists'], function($) {
     },
 
     /**
-    * Close all open accordion entries within one accordion for natural behavior.
-    * @function _closeAll
+    * Close other opened accordion-items within accordion for natural behavior.
+    * @function _closeOtherAccordionItems
     * @private
     * @param {Object} accordion_header - The clicked accordion header.
     */
-    _closeAll: function(accordion_header) {
+    _closeOtherAccordionItems: function(accordion_header) {
       var
       opened = accordion_header.closest(Accordion.options.accordion).find('.' + Accordion.options.class_accordion_active);
 
