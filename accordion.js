@@ -167,11 +167,10 @@ define(['jquery', 'jquery.exists'], function($) {
 
           // set IDs
           $currentAccordionHeader
-          .attr('id', 'accordion-' + index + '-header-' + index);
+          .attr('id', Accordion._getAccodionHeaderID(index, i));
 
           $currentAccordionContent
-          .attr('id', 'accordion-' + index + '-content-' + index);
-
+          .attr('id', Accordion._getAccodionContentID(index, i));
           // set aria-controls
           $currentAccordionHeader
           .attr('aria-controls', $currentAccordionContent.attr('id'));
@@ -323,7 +322,45 @@ define(['jquery', 'jquery.exists'], function($) {
 
         });
       });
-    }
+    },
+
+    /**
+    * return accodion-Header-id string
+    * @function _getAccodionHeaderID
+    * @private
+    * @param {String} idValue - Number represents the Header-Major-ID
+    * @param {Number} idValue - String represents the current Header-ID-Attribute
+    * @param {Number} idMinorCounter - represents the Header-Minor-ID
+    * @return {String} - current Header-id String
+    */
+    _getAccodionHeaderID: function(idValue, idMinorCounter) {
+      if (typeof idValue === typeof 1 && typeof idMinorCounter === typeof 1) {
+        // create Header-id
+        return 'accordion-' + idValue + '-header-' + idMinorCounter;
+      } else if (typeof idValue === typeof "") {
+        // return Content-id for current Header-id
+        return idValue.replace('-content-', '-header-');
+      }
+    },
+
+    /**
+    * return accodion-Content-id string
+    * @function _getAccodionHeaderID
+    * @private
+    * @param {String} idValue - Number represents the Content-Major-ID
+    * @param {Number} idValue - String represents the current Content-ID-Attribute
+    * @param {Number} idMinorCounter - represents the Content-Minor-ID
+    * @return {String} - current Content-id String
+    */
+    _getAccodionContentID: function(idValue, idMinorCounter) {
+      if (typeof idValue === typeof 1 && typeof idMinorCounter === typeof 1) {
+        // create Content-id
+        return 'accordion-' + idValue + '-content-' + idMinorCounter;
+      } else if (typeof idValue === typeof "") {
+        // return Header-id for current Content-id
+        return idValue.replace('-header-', '-content-');
+      }
+    },
   };
 
   return /** @alias module:Accordion */ {
