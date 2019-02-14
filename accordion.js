@@ -89,12 +89,12 @@ define(['jquery', 'jquery.exists'], function($) {
     /**
     * Bind events to all interactive elements.
     * @function _bindEvents
-    * @param {Object} accordion - Current accordion from setup loop.
+    * @param {JQuery} accordion - Current accordion from setup loop.
     * @private
     */
-    _bindEvents: function(accordion) {
+    _bindEvents: function($accordion) {
       // Click accordion header
-      accordion.on('click.accordion', Accordion.options.accordion_header, function(event) {
+      $accordion.on('click.accordion', Accordion.options.accordion_header, function(event) {
         event.preventDefault();
 
         Accordion._closeOtherAccordionItems($(this));
@@ -102,7 +102,7 @@ define(['jquery', 'jquery.exists'], function($) {
       });
 
       // tab to accordion header and press space bar
-      accordion.on('keydown.accordion', Accordion.options.accordion_header, function(event) {
+      $accordion.on('keydown.accordion', Accordion.options.accordion_header, function(event) {
         if (event.keyCode === 32) {
           event.preventDefault();
           Accordion._toggleAccordion($(this));
@@ -146,14 +146,14 @@ define(['jquery', 'jquery.exists'], function($) {
     /**
     * loop throught accodrion items within each accordion.
     * @function _setupAccordionItems
-    * @param {Object} accordion - jQuery object with current accordion from setup loop.
+    * @param {JQuery} accordion - jQuery object with current accordion from setup loop.
     * @param {Object} index - index from setup loop.
     * @private
     */
-    _setupAccordionItems: function(accordion, index) {
+    _setupAccordionItems: function($accordion, index) {
       var
-      $accordion_header = accordion.find(Accordion.options.accordion_header),
-      $accordion_content = accordion.find(Accordion.options.accordion_content),
+      $accordion_header = $accordion.find(Accordion.options.accordion_header),
+      $accordion_content = $accordion.find(Accordion.options.accordion_content),
       $currentAccordionHeader,
       $currentAccordionContent,
 
@@ -209,15 +209,15 @@ define(['jquery', 'jquery.exists'], function($) {
     * Close other opened accordion-items within accordion for natural behavior.
     * @function _closeOtherAccordionItems
     * @private
-    * @param {Object} accordion_header - The clicked accordion header.
+    * @param {JQuery} accordion_header - The clicked accordion header.
     */
-    _closeOtherAccordionItems: function(accordion_header) {
+    _closeOtherAccordionItems: function($accordion_header) {
       var
-      opened = accordion_header.closest(Accordion.options.accordion).find('.' + Accordion.options.class_accordion_active);
+      $opened = $accordion_header.closest(Accordion.options.accordion).find('.' + Accordion.options.class_accordion_active);
 
-      // close opened entry when option is set and the open entry is not the clicked
-      if(this.options.closeOtherAccordionItems && !opened.is(accordion_header)) {
-        this._closeAccordion(opened);
+      // close $opened entry when option is set and the open entry is not the clicked
+      if(this.options.closeOtherAccordionItems && !$opened.is($accordion_header)) {
+        this._closeAccordion($opened);
       }
     },
 
@@ -225,23 +225,23 @@ define(['jquery', 'jquery.exists'], function($) {
     * Open a single accordion entry and trigger events.
     * @function _openAccordion
     * @private
-    * @param {Object} accordion_header - The clicked accordion header.
+    * @param {JQuery} accordion_header - The clicked accordion header.
     */
-    _openAccordion: function(accordion_header) {
+    _openAccordion: function($accordion_header) {
       var
-      accordion_content = accordion_header.next();
+      $accordion_content = $accordion_header.next();
 
       // trigger event before the accordion opens
-      accordion_header.trigger('accordion.beforeOpen', [accordion_header, accordion_content]);
+      $accordion_header.trigger('accordion.beforeOpen', [$accordion_header, $accordion_content]);
 
       // accordion-header
-      accordion_header.attr('aria-selected', 'true').addClass(Accordion.options.class_accordion_active);
+      $accordion_header.attr('aria-selected', 'true').addClass(Accordion.options.class_accordion_active);
 
       // accordion-content
-      accordion_content.attr('aria-expanded', 'true').attr('aria-hidden', 'false');
+      $accordion_content.attr('aria-expanded', 'true').attr('aria-hidden', 'false');
 
-      accordion_content.slideDown(Accordion.options.animationSpeed, function() {
-        accordion_header.trigger('accordion.opened', [accordion_header, accordion_content]);
+      $accordion_content.slideDown(Accordion.options.animationSpeed, function() {
+        $accordion_header.trigger('accordion.opened', [$accordion_header, $accordion_content]);
       });
 
     },
@@ -250,7 +250,7 @@ define(['jquery', 'jquery.exists'], function($) {
     * Close a single accordion entry and trigger events.
     * @function _closeAccordion
     * @private
-    * @param {$Object} $accordion_header - The clicked accordion header.
+    * @param {JQuery} $accordion_header - The clicked accordion header.
     */
     _closeAccordion: function($accordion_header) {
 
@@ -277,16 +277,16 @@ define(['jquery', 'jquery.exists'], function($) {
     * Toggle the accordion entry.
     * @function _toggleAccordion
     * @private
-    * @param {Object} accrodion_header - The clicked accordion header.
+    * @param {JQuery} accrodion_header - The clicked accordion header.
     */
-    _toggleAccordion: function(accordion_header) {
+    _toggleAccordion: function($accordion_header) {
 
-      if (accordion_header.attr('aria-selected') === 'false') {
+      if ($accordion_header.attr('aria-selected') === 'false') {
         // open:
-        this._openAccordion(accordion_header);
+        this._openAccordion($accordion_header);
       } else {
         // close:
-        this._closeAccordion(accordion_header);
+        this._closeAccordion($accordion_header);
       }
     },
 
@@ -294,7 +294,6 @@ define(['jquery', 'jquery.exists'], function($) {
     * Open a single accordion entry via a hash in the URL.
     * @function _openAccordionViaHash
     * @private
-    * @param {Object} accrodion_header - The clicked accordion header.
     */
     _openAccordionViaHash: function() {
       // find linked accordion content and click
