@@ -229,7 +229,8 @@ define(['jquery', 'jquery.exists'], function($) {
     */
     _openAccordion: function($accordion_header) {
       var
-      $accordion_content = $accordion_header.next();
+      accordion_content = document.getElementById(Accordion._getAccodionContentID($accordion_header.attr('id'))),
+      $accordion_content = $(accordion_content);
 
       // trigger event before the accordion opens
       $accordion_header.trigger('accordion.beforeOpen', [$accordion_header, $accordion_content]);
@@ -255,11 +256,11 @@ define(['jquery', 'jquery.exists'], function($) {
     _closeAccordion: function($accordion_header) {
 
       var
-      $accordion_content = $accordion_header.next();
+      accordion_content = document.getElementById(Accordion._getAccodionContentID($accordion_header.attr('id'))),
+      $accordion_content = $(accordion_content);
 
       // trigger event before the accordion closes
       $accordion_header.trigger('accordion.beforeClose', [$accordion_header, $accordion_content]);
-
 
       // accordion-header
       $accordion_header.attr('aria-selected', 'false').removeClass(Accordion.options.class_accordion_active);
@@ -296,10 +297,15 @@ define(['jquery', 'jquery.exists'], function($) {
     * @private
     */
     _openAccordionViaHash: function() {
-      // find linked accordion content and click
-      // corresponding .accordion-header to open it
+      // find accordion-header by accordion-content-id within url
+
       if(window.location.hash) {
-        $(window.location.hash).prev().trigger('click');
+        var
+        hashForContentID = window.location.hash.replace('#',''),
+        accordion_header = document.getElementById(Accordion._getAccodionHeaderID(hashForContentID)),
+        $accordion_header = $(accordion_header);
+
+        $accordion_header.trigger('click');
       }
     },
 
@@ -312,11 +318,18 @@ define(['jquery', 'jquery.exists'], function($) {
       // open accordion content with class
       // 'accordion-opened'
       this.$accordion_opened.exists(function() {
-        Accordion.$accordion_opened.each(function() {
+        var
+        accordion_header,
+        $accordion_header;
+
+        Accordion.$accordion_opened.each(function(index, accordion_content_opened) {
 
           // only open if it is not linked via url window.location.hash
-          if(window.location.hash != ('#' + this.id)) {
-            $(this).prev().trigger('click');
+          if(window.location.hash != ('#' + accordion_content_opened.id)) {
+            accordion_header = document.getElementById(Accordion._getAccodionHeaderID(accordion_content_opened.id)),
+            $accordion_header = $(accordion_header);
+
+            $accordion_header.trigger('click');
           }
 
         });
