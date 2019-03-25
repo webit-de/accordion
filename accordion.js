@@ -108,6 +108,11 @@ define(['jquery', 'jquery.exists'], function($) {
           Accordion._toggleAccordion($(this));
         }
       });
+
+      $accordion.on('scrollToAccordion', Accordion.options.accordion_header, function(event) {
+        Accordion._scrollToAccodionID();
+      });
+
     },
 
     /**
@@ -317,7 +322,11 @@ define(['jquery', 'jquery.exists'], function($) {
         accordion_header = document.getElementById(Accordion._getAccodionHeaderID(hashForContentID)),
         $accordion_header = $(accordion_header);
 
-        $accordion_header.trigger('click');
+        if (accordion_header && accordion_header.className.indexOf(Accordion.options.class_accordion_active) === -1) {
+          $accordion_header.trigger('click');
+        }
+
+        $accordion_header.trigger('scrollToAccordion');
       }
     },
 
@@ -369,7 +378,7 @@ define(['jquery', 'jquery.exists'], function($) {
 
     /**
     * return accodion-Content-id string
-    * @function _getAccodionHeaderID
+    * @function _getAccodionContentID
     * @private
     * @param {String} idValue - Number represents the Content-Major-ID
     * @param {Number} idValue - String represents the current Content-ID-Attribute
@@ -383,6 +392,34 @@ define(['jquery', 'jquery.exists'], function($) {
       } else if (typeof idValue === typeof "") {
         // return Header-id for current Content-id
         return idValue.replace('-header-', '-content-');
+      }
+    },
+
+    /**
+    * go to accordion-header-id
+    * @function _scrollToAccodionID
+    * @private
+    */
+    _scrollToAccodionID: function() {
+      var
+      element,
+      scrollPosition,
+      accordionHeaderID = window.location.hash.replace('#','');
+
+      try {
+        element = document.getElementById(accordionHeaderID);
+
+        if (element && element.offsetHeight) {
+          scrollPosition = element.offsetTop;
+
+          window.scrollTo({
+            top: scrollPosition,
+            left: 0,
+            behavior: 'smooth'
+          });
+
+        }
+      } catch (e) {
       }
     },
   };
