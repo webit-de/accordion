@@ -403,23 +403,20 @@ define(['jquery', 'jquery.exists'], function($) {
     _scrollToAccodionID: function() {
       var
       element,
-      scrollPosition,
       accordionHeaderID = window.location.hash.replace('#','');
 
       try {
         element = document.getElementById(accordionHeaderID);
 
-        if (element && element.offsetHeight) {
-          scrollPosition = element.offsetTop;
-
+        if (element) {
           window.scrollTo({
-            top: scrollPosition,
+            top: element.offsetTop,
             left: 0,
             behavior: 'smooth'
           });
-
         }
       } catch (e) {
+        console.log(e);
       }
     },
   };
