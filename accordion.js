@@ -19,10 +19,11 @@ define(['jquery', 'jquery.exists'], function($) {
       accordion: '.accordion', // accordion-wrapper className
       accordion_content: '.accordion-content', // accordion-item content className
       accordion_header: '.accordion-header', // accordion-item header className
-      accordion_opened: '.accordion-opened', // className fot opened accordion-item
+      accordion_opened: '.accordion-opened', // className to set initial opened accordion-item
       accordion_item_tagName: undefined, // tagName to wrap accordion-item (accordion-header & accordion-content)
       accordion_item_className: 'accordion-item', // className for accordion-item wrapper-element
-      class_accordion_active: 'accordion-active' // className for current opened accordion-item
+      class_accordion_active: 'accordion-active', // className for current opened accordion-header-item
+      class_accordion_show: 'accordion-show' // className for current shown accordion-content-item
     },
 
     /**
@@ -80,6 +81,7 @@ define(['jquery', 'jquery.exists'], function($) {
 
         $accordion_group.find(Accordion.options.accordion_content)
         .removeAttr('aria-expanded role aria-hidden aria-labelledby style id')
+        .removeClass(Accordion.options.class_accordion_show)
         .removeClass(Accordion.options.accordion_opened.replace('.', ''));
 
         Accordion.$accordion_header.off('.accordion');
@@ -259,6 +261,7 @@ define(['jquery', 'jquery.exists'], function($) {
       $accordion_content.attr('aria-expanded', 'true').attr('aria-hidden', 'false');
 
       $accordion_content.slideDown(Accordion.options.animationSpeed, function() {
+        $accordion_content.addClass(Accordion.options.class_accordion_show);
         $accordion_header.trigger('accordion.opened', [$accordion_header, $accordion_content]);
       });
 
@@ -286,6 +289,7 @@ define(['jquery', 'jquery.exists'], function($) {
       $accordion_content.attr('aria-expanded', 'false').attr('aria-hidden', 'true');
 
       $accordion_content.slideUp(Accordion.options.animationSpeed, function() {
+        $accordion_content.removeClass(Accordion.options.class_accordion_show);
         $accordion_header.trigger('accordion.closed', [$accordion_header, $accordion_content]);
       });
 

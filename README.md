@@ -56,10 +56,11 @@ Accordion.init({
   accordion:  String  // Default: '.accordion', accordion-wrapper className
   accordion_content:  String  // Default: '.accordion-content', accordion-item content className
   accordion_header:  String  // Default: '.accordion-header', accordion-item header className
-  accordion_opened:  String  // Default: '.accordion-opened', className fot opened accordion-item
+  accordion_opened:  String  // Default: '.accordion-opened', className to set initial opened accordion-item
   accordion_item_tagName:  String  // Default: undefined, tagName to wrap accordion-item (accordion-header & accordion-content)
   accordion_item_className:  String  // Default: 'accordion-item', className for accordion-item wrapper-element
-  class_accordion_active:  String  // Default: 'accordion-active' className for current opened accordion-item
+  class_accordion_active:  String  // Default: 'accordion-active' className for current opened accordion-header-item
+  class_accordion_show: String // Default: 'accordion-show' className for current shown accordion-content-item
 });
 ```
 
