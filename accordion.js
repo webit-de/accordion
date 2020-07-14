@@ -72,7 +72,7 @@ define(['jquery', 'jquery.exists'], function($) {
     */
     destroy: function($accordion_group) {
       if ($accordion_group.length) {
-        $accordion_group.removeAttr('role');
+        $accordion_group.removeAttr('role aria-orientation');
         $accordion_group.data('name', null);
 
         $accordion_group.find(Accordion.options.accordion_header)
@@ -124,7 +124,7 @@ define(['jquery', 'jquery.exists'], function($) {
     */
     _setupAccordion: function() {
       // set html attributes
-      this.$accordion.attr('role', 'tablist');
+      this.$accordion.attr('role', 'tablist').attr('aria-orientation', 'vertical');
       this.$accordion_header.attr('role', 'tab').attr('tabindex', '0').attr('aria-expanded', 'false').attr('aria-selected', 'false');
       this.$accordion_content.attr('role', 'tabpanel').attr('aria-hidden', 'true').hide();
 
