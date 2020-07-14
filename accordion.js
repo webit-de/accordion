@@ -105,7 +105,7 @@ define(['jquery', 'jquery.exists'], function($) {
 
       // tab to accordion header and press space bar
       $accordion.on('keydown.accordion', Accordion.options.accordion_header, function(event) {
-        if (event.keyCode === 32) {
+        if (event.keyCode === 32 || event.keyCode === 13) {
           event.preventDefault();
           Accordion._toggleAccordion($(this));
         }
